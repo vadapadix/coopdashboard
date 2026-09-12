@@ -1,10 +1,10 @@
 {
-  "/api/late-notice/route": "app/api/late-notice/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/attendance/route": "app/api/attendance/route.js",
   "/api/schedule/route": "app/api/schedule/route.js",
   "/api/students/route": "app/api/students/route.js",
+  "/api/late-notice/route": "app/api/late-notice/route.js",
   "/api/tasks/route": "app/api/tasks/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/groups/[id]/page": "app/groups/[id]/page.js",
   "/classroom/page": "app/classroom/page.js",
   "/page": "app/page.js"

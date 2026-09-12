@@ -29,6 +29,30 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, courseName, title, dueDate, isUrgent, classroomLink, submitted, total } = body;
+
+    const idx = tasksStore.findIndex(t => t.id === id);
+    if (idx === -1) {
+      return NextResponse.json({ error: 'Завдання не знайдено' }, { status: 404 });
+    }
+
+    if (courseName !== undefined) tasksStore[idx].courseName = courseName;
+    if (title !== undefined) tasksStore[idx].title = title;
+    if (dueDate !== undefined) tasksStore[idx].dueDate = dueDate;
+    if (isUrgent !== undefined) tasksStore[idx].isUrgent = Boolean(isUrgent);
+    if (classroomLink !== undefined) tasksStore[idx].classroomLink = classroomLink;
+    if (submitted !== undefined) tasksStore[idx].submitted = Number(submitted);
+    if (total !== undefined) tasksStore[idx].total = Number(total);
+
+    return NextResponse.json({ success: true, task: tasksStore[idx] });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
@@ -39,3 +63,4 @@ export async function DELETE(request: NextRequest) {
   }
   return NextResponse.json({ error: 'Завдання не знайдено' }, { status: 404 });
 }
+

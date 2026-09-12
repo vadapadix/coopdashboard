@@ -101,27 +101,50 @@ export default function DashboardPage() {
                 <h3 className="text-base font-bold text-white">
                   Отримано сповіщення «Я запізнюсь» з мобільного додатку myCOOP
                 </h3>
-                <div className="mt-2 space-y-1.5">
+                <div className="mt-2 space-y-2">
                   {notices.map((n) => (
-                    <div key={n.id} className="flex flex-wrap items-center gap-2 text-sm text-slate-200">
-                      <span className="font-semibold text-white">{n.studentName} ({n.group}):</span>
-                      <span className="px-2 py-0.5 rounded-md bg-red-950 text-red-300 font-medium text-xs border border-red-800/40">
-                        +{n.estimatedMinutes} хв
-                      </span>
-                      <span className="text-slate-300">«{n.reason}»</span>
-                      <span className="text-xs text-slate-400">({n.timestamp})</span>
+                    <div key={n.id} className="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-200 bg-[#2C151F] p-2 rounded-lg border border-[#52212F]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-semibold text-white">{n.studentName} ({n.group}):</span>
+                        <span className="px-2 py-0.5 rounded-md bg-red-950 text-red-300 font-medium text-xs border border-red-800/40">
+                          +{n.estimatedMinutes} хв
+                        </span>
+                        <span className="text-slate-300">«{n.reason}»</span>
+                        <span className="text-xs text-slate-400">({n.timestamp})</span>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          await fetch(`/api/late-notice?id=${n.id}`, { method: "DELETE" });
+                          await refreshData();
+                        }}
+                        className="text-slate-400 hover:text-red-300 text-xs px-2 py-0.5 rounded bg-red-950/40 hover:bg-red-900/50 transition-colors"
+                        title="Позначити прочитаним"
+                      >
+                        ✕ Прочитано
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <Link
-              href="/groups/it-31"
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/60 text-red-200 border border-red-700/40 transition-colors"
-            >
-              Перейти в журнал
-            </Link>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={async () => {
+                  await fetch("/api/late-notice", { method: "DELETE" });
+                  await refreshData();
+                }}
+                className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg border border-[#6B2A3E] bg-[#2C151F] hover:bg-[#3D1D2B] transition-colors"
+              >
+                Очистити всі
+              </button>
+              <Link
+                href="/groups/it-31"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/60 text-red-200 border border-red-700/40 transition-colors"
+              >
+                Перейти в журнал
+              </Link>
+            </div>
           </div>
         </div>
       )}
