@@ -43,7 +43,8 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    const interval = setInterval(refreshData, 5000);
+    refreshData();
+    const interval = setInterval(refreshData, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -114,6 +115,13 @@ export default function DashboardPage() {
                       </div>
                       <button
                         onClick={async () => {
+                          setNotices(prev => prev.filter(item => item.id !== n.id));
+                          setStudents(prev => prev.map(s => (s.id === n.studentId || s.fullName === n.studentName) ? {
+                            ...s,
+                            attendanceState: 'present',
+                            lateReason: undefined,
+                            lateMinutes: undefined
+                          } : s));
                           await fetch(`/api/late-notice?id=${n.id}`, { method: "DELETE" });
                           await refreshData();
                         }}
@@ -131,6 +139,13 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={async () => {
+                  setNotices([]);
+                  setStudents(prev => prev.map(s => s.attendanceState === 'late' ? {
+                    ...s,
+                    attendanceState: 'present',
+                    lateReason: undefined,
+                    lateMinutes: undefined
+                  } : s));
                   await fetch("/api/late-notice", { method: "DELETE" });
                   await refreshData();
                 }}

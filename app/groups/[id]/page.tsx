@@ -37,6 +37,15 @@ export default function GroupRollCallPage() {
 
   useEffect(() => {
     fetchStudents();
+    const interval = setInterval(() => {
+      fetch(`/api/attendance?group=${selectedGroup}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setStudents(data);
+        })
+        .catch(() => {});
+    }, 3000);
+    return () => clearInterval(interval);
   }, [selectedGroup]);
 
   const fetchStudents = async () => {
@@ -59,8 +68,8 @@ export default function GroupRollCallPage() {
       prev.map((s) => (s.id === studentId ? { 
         ...s, 
         attendanceState: state,
-        lateMinutes: minutes !== undefined ? minutes : s.lateMinutes,
-        lateReason: reason !== undefined ? reason : s.lateReason
+        lateMinutes: state === "late" ? (minutes !== undefined ? minutes : s.lateMinutes) : undefined,
+        lateReason: state === "late" ? (reason !== undefined ? reason : s.lateReason) : undefined
       } : s))
     );
 
@@ -71,8 +80,8 @@ export default function GroupRollCallPage() {
         body: JSON.stringify({ 
           studentId, 
           state,
-          minutes: minutes || null,
-          reason: reason || null
+          minutes: state === "late" ? (minutes || null) : null,
+          reason: state === "late" ? (reason || null) : null
         })
       });
       setSavedSuccess(true);

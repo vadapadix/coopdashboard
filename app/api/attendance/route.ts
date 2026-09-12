@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { studentsStore } from '@/lib/data';
+import { studentsStore, lateNoticesStore } from '@/lib/data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -53,8 +53,47 @@ export async function POST(request: NextRequest) {
 
     if (student) {
       student.attendanceState = state;
-      if (reason !== undefined) student.lateReason = reason;
-      if (minutes !== undefined) student.lateMinutes = minutes;
+
+      if (state === 'present' || state === 'absent') {
+        student.lateReason = undefined;
+        student.lateMinutes = undefined;
+
+        // Remove any existing late notice for this student
+        const noticeIdx = lateNoticesStore.findIndex(
+          (n) => n.studentId === student.id || n.studentName === student.fullName
+        );
+        if (noticeIdx !== -1) {
+          lateNoticesStore.splice(noticeIdx, 1);
+        }
+      } else if (state === 'late') {
+        student.lateReason = reason || student.lateReason || 'Запізнення';
+        student.lateMinutes = minutes !== undefined ? Number(minutes) : (student.lateMinutes || 15);
+
+        const lateReason = student.lateReason || 'Запізнення';
+        const lateMinutes = student.lateMinutes || 15;
+
+        // Upsert notice in lateNoticesStore
+        const existingNotice = lateNoticesStore.find(
+          (n) => n.studentId === student.id || n.studentName === student.fullName
+        );
+        if (existingNotice) {
+          existingNotice.reason = lateReason;
+          existingNotice.estimatedMinutes = lateMinutes;
+        } else {
+          lateNoticesStore.unshift({
+            id: 'notice-' + Date.now(),
+            studentId: student.id,
+            studentName: student.fullName,
+            group: student.group,
+            pair: '1 пара (9:00 - 10:20)',
+            subject: 'Алгоритми та структури даних',
+            estimatedMinutes: lateMinutes,
+            reason: lateReason,
+            timestamp: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
+          });
+        }
+      }
+
       return NextResponse.json({ success: true, student });
     }
 

@@ -48,13 +48,35 @@ export async function DELETE(request: NextRequest) {
     if (id) {
       const idx = lateNoticesStore.findIndex((n) => n.id === id);
       if (idx !== -1) {
+        const notice = lateNoticesStore[idx];
+
+        // Find matching student and reset late state to present
+        const student = studentsStore.find(
+          (s) => (notice.studentId && s.id === notice.studentId) || (notice.studentName && s.fullName === notice.studentName)
+        );
+        if (student && student.attendanceState === "late") {
+          student.attendanceState = "present";
+          student.lateReason = undefined;
+          student.lateMinutes = undefined;
+        }
+
         lateNoticesStore.splice(idx, 1);
         return NextResponse.json({ success: true });
       }
       return NextResponse.json({ error: "Повідомлення не знайдено" }, { status: 404 });
     }
 
-    // Clear all
+    // Clear all: reset all late students to present
+    for (const notice of lateNoticesStore) {
+      const student = studentsStore.find(
+        (s) => (notice.studentId && s.id === notice.studentId) || (notice.studentName && s.fullName === notice.studentName)
+      );
+      if (student && student.attendanceState === "late") {
+        student.attendanceState = "present";
+        student.lateReason = undefined;
+        student.lateMinutes = undefined;
+      }
+    }
     lateNoticesStore.length = 0;
     return NextResponse.json({ success: true, message: "Всі повідомлення очищено" });
   } catch (error: any) {
