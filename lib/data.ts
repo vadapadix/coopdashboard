@@ -3,7 +3,7 @@ export interface Student {
   fullName: string;
   email: string;
   group: string;
-  attendanceState: "present" | "absent" | "late";
+  attendanceState: 'present' | 'absent' | 'late';
   lateMinutes?: number;
   lateReason?: string;
   monthAttendancePercent: number;
@@ -22,76 +22,146 @@ export interface LateNoticeItem {
   timestamp: string;
 }
 
-// Global in-memory state shared across Next.js API routes and pages
-export const studentsStore: Student[] = [
+export interface ClassroomCourseTask {
+  id: string;
+  courseId: string;
+  courseName: string;
+  title: string;
+  dueDate: string;
+  submitted: number;
+  total: number;
+  isUrgent: boolean;
+  classroomLink: string;
+}
+
+// In-memory data store with full editing capabilities
+export let studentsStore: Student[] = [
   {
-    id: "student-it31-01",
-    fullName: "Трахтірібонькін Владислав",
-    email: "v.traktiribonkin@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "absent",
+    id: 'student-it31-01',
+    fullName: 'Трахтірібонькін Владислав',
+    email: 'v.traktiribonkin@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'absent',
     monthAttendancePercent: 75.0,
     averageGrade: 4.5,
   },
   {
-    id: "student-it31-02",
-    fullName: "Бойко Артем Андрійович",
-    email: "a.boyko@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "present",
+    id: 'student-it31-02',
+    fullName: 'Бойко Артем Андрійович',
+    email: 'a.boyko@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'present',
     monthAttendancePercent: 92.0,
     averageGrade: 4.8,
   },
   {
-    id: "student-it31-03",
-    fullName: "Ковальчук Дарина Сергіївна",
-    email: "d.kovalchuk@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "present",
+    id: 'student-it31-03',
+    fullName: 'Ковальчук Дарина Сергіївна',
+    email: 'd.kovalchuk@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'present',
     monthAttendancePercent: 96.0,
     averageGrade: 5.0,
   },
   {
-    id: "student-it31-04",
-    fullName: "Мельник Максим Ігорович",
-    email: "m.melnyk@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "present",
+    id: 'student-it31-04',
+    fullName: 'Мельник Максим Ігорович',
+    email: 'm.melnyk@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'present',
     monthAttendancePercent: 88.0,
     averageGrade: 4.2,
   },
   {
-    id: "student-it31-05",
-    fullName: "Шевченко Софія Олегівна",
-    email: "s.shevchenko@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "late",
+    id: 'student-it31-05',
+    fullName: 'Шевченко Софія Олегівна',
+    email: 's.shevchenko@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'late',
     lateMinutes: 10,
-    lateReason: "Затримка транспорту",
+    lateReason: 'Затримка транспорту',
     monthAttendancePercent: 84.0,
     averageGrade: 4.6,
   },
   {
-    id: "student-it31-06",
-    fullName: "Якимчук Богдан Васильович",
-    email: "b.yakymchuk@rkepk.edu.ua",
-    group: "IT-31",
-    attendanceState: "present",
+    id: 'student-it31-06',
+    fullName: 'Якимчук Богдан Васильович',
+    email: 'b.yakymchuk@rkepk.edu.ua',
+    group: 'IT-31',
+    attendanceState: 'present',
     monthAttendancePercent: 90.0,
     averageGrade: 4.4,
   }
 ];
 
-export const lateNoticesStore: LateNoticeItem[] = [
+export let lateNoticesStore: LateNoticeItem[] = [
   {
-    id: "notice-1",
-    studentId: "student-it31-05",
-    studentName: "Шевченко Софія Олегівна",
-    group: "IT-31",
-    pair: "1 пара (9:00 - 10:20)",
-    subject: "Алгоритми та структури даних",
+    id: 'notice-1',
+    studentId: 'student-it31-05',
+    studentName: 'Шевченко Софія Олегівна',
+    group: 'IT-31',
+    pair: '1 пара (9:00 - 10:20)',
+    subject: 'Алгоритми та структури даних',
     estimatedMinutes: 10,
-    reason: "Затримка тролейбуса №7",
-    timestamp: "08:55",
+    reason: 'Затримка тролейбуса №7',
+    timestamp: '08:55',
+  }
+];
+
+export let tasksStore: ClassroomCourseTask[] = [
+  {
+    id: 't-1',
+    courseId: 'c-algo',
+    courseName: 'Алгоритми та структури даних',
+    title: 'Лабораторна робота №5: Двійкові дерева пошуку',
+    dueDate: '18.09.2026, 23:59',
+    submitted: 19,
+    total: 27,
+    isUrgent: false,
+    classroomLink: 'https://classroom.google.com'
+  },
+  {
+    id: 't-2',
+    courseId: 'c-algo',
+    courseName: 'Алгоритми та структури даних',
+    title: 'Практична робота №4: Хеш-таблиці та колізії',
+    dueDate: '11.09.2026',
+    submitted: 26,
+    total: 27,
+    isUrgent: false,
+    classroomLink: 'https://classroom.google.com'
+  },
+  {
+    id: 't-3',
+    courseId: 'c-oop',
+    courseName: 'Об\'єктно-орієнтоване програмування',
+    title: 'Практична №37',
+    dueDate: 'Сьогодні, до 8:30',
+    submitted: 14,
+    total: 27,
+    isUrgent: true,
+    classroomLink: 'https://classroom.google.com'
+  },
+  {
+    id: 't-4',
+    courseId: 'c-oop',
+    courseName: 'Об\'єктно-орієнтоване програмування',
+    title: 'Практична №36: Патерни проєктування',
+    dueDate: '08.09.2026',
+    submitted: 27,
+    total: 27,
+    isUrgent: false,
+    classroomLink: 'https://classroom.google.com'
+  },
+  {
+    id: 't-5',
+    courseId: 'c-db',
+    courseName: 'Бази даних',
+    title: 'Курсова робота',
+    dueDate: '25.05.2026, до 8:30 • 4 місяці',
+    submitted: 6,
+    total: 27,
+    isUrgent: false,
+    classroomLink: 'https://classroom.google.com'
   }
 ];

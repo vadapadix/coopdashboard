@@ -1,9 +1,11 @@
 {
-  "/_not-found/page": "/_not-found",
-  "/api/attendance/route": "/api/attendance",
   "/api/late-notice/route": "/api/late-notice",
+  "/api/attendance/route": "/api/attendance",
   "/api/schedule/route": "/api/schedule",
-  "/classroom/page": "/classroom",
+  "/api/students/route": "/api/students",
+  "/api/tasks/route": "/api/tasks",
+  "/_not-found/page": "/_not-found",
   "/groups/[id]/page": "/groups/[id]",
+  "/classroom/page": "/classroom",
   "/page": "/"
 }

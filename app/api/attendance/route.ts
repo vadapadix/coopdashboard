@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { studentsStore } from "@/lib/data";
+import { NextRequest, NextResponse } from 'next/server';
+import { studentsStore } from '@/lib/data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const email = searchParams.get("email");
-  const group = searchParams.get("group");
+  const email = searchParams.get('email');
+  const group = searchParams.get('group');
 
   if (email) {
     const student = studentsStore.find(
@@ -13,9 +13,9 @@ export async function GET(request: NextRequest) {
 
     if (student) {
       return NextResponse.json({
-        isMarkedAbsent: student.attendanceState === "absent",
-        currentSubject: "Алгоритми та структури даних",
-        currentPair: "1 пара",
+        isMarkedAbsent: student.attendanceState === 'absent',
+        currentSubject: 'Алгоритми та структури даних',
+        currentPair: '1 пара',
         monthAttendancePercent: student.monthAttendancePercent,
         topRankPercent: 80,
         averageGrade: student.averageGrade,
@@ -26,20 +26,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Default fallback
     return NextResponse.json({
       isMarkedAbsent: true,
-      currentSubject: "Алгоритми та структури даних",
-      currentPair: "1 пара",
+      currentSubject: 'Алгоритми та структури даних',
+      currentPair: '1 пара',
       monthAttendancePercent: 75.0,
       topRankPercent: 80,
       averageGrade: 4.5,
-      state: "absent",
+      state: 'absent',
       lastUpdated: new Date().toISOString()
     });
   }
 
-  // Return list for group
   const list = group ? studentsStore.filter(s => s.group === group) : studentsStore;
   return NextResponse.json(list);
 }
@@ -55,13 +53,12 @@ export async function POST(request: NextRequest) {
 
     if (student) {
       student.attendanceState = state;
-      if (reason) student.lateReason = reason;
-      if (minutes) student.lateMinutes = minutes;
-
+      if (reason !== undefined) student.lateReason = reason;
+      if (minutes !== undefined) student.lateMinutes = minutes;
       return NextResponse.json({ success: true, student });
     }
 
-    return NextResponse.json({ error: "Student not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Студента не знайдено' }, { status: 404 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

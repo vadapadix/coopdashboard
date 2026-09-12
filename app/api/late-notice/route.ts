@@ -39,3 +39,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const idx = lateNoticesStore.findIndex((n) => n.id === id);
+      if (idx !== -1) {
+        lateNoticesStore.splice(idx, 1);
+        return NextResponse.json({ success: true });
+      }
+      return NextResponse.json({ error: "Повідомлення не знайдено" }, { status: 404 });
+    }
+
+    // Clear all
+    lateNoticesStore.length = 0;
+    return NextResponse.json({ success: true, message: "Всі повідомлення очищено" });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
